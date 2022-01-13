@@ -22,5 +22,4 @@ testapp_port = 9292
 
 
 
-
 Домашнее задание разработано для курса [DevOps практики и инструменты](https://otus.ru/lessons/devops-praktiki-i-instrumenty/)
