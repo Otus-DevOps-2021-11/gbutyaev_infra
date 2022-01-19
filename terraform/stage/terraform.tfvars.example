@@ -3,5 +3,4 @@ zone                     = "111111111111111111"
 image_id                 = "111111111111111111"
 public_key_path          = "~/.ssh/appuser.pub"
 subnet_id                = ""11111111111111111111
-service_account_key_file = "./key.json"
 private_key_path         = "~/.ssh/appuser"
