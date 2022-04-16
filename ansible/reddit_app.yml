@@ -1,0 +1,43 @@
+---
+- name: Configure hosts & deploy application # <-- Словесное описание сценария(name)
+  hosts: all # <-- Для каких хостов будут выполняться описанные ниже таски (hosts)
+  vars:
+    mongo_bind_ip: 0.0.0.0 #задаем переменную в блоке vars
+    db_host: 51.250.80.169
+  tasks: # <-- Блок тасков (заданий), которые будут выполняться для данных хостов
+    - name: Change mongo config file
+      become: true # <-- Выполнить задание от root
+      template:
+        src: templates/mongod.conf.j2 # <-- Путь до локального файла-шаблона
+        dest: /etc/mongod.conf # <-- Путь на удаленном хосте
+        mode: 0644 # <-- Права на файл, которые нужно установить
+      tags: db-tag #список тегов для задачи
+      notify: restart mongod
+    
+    - name: Add init file for puma
+      become: true
+      copy:
+        src: files/puma.service
+        dest: /etc/systemd/system/puma.service
+      tags: app-tag
+      notify: reload puma
+
+    - name: Add config for DB connection
+      template:
+        src: templates/db_cofig.j2
+        dest: /home/ubuntu/db_config
+        tags: app-tag
+    
+    - name: enable puma
+      become: true
+      systemd: name=puma enabled=yes
+      tags: app-tag
+   
+  handlers: 
+  - name: restart mongod
+    become: true
+    service: name=mongod state=restarted
+
+  - name: reload puma
+    become: true
+    systemd: name=puma state=restarted
