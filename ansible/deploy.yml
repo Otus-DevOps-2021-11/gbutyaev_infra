@@ -1,4 +1,3 @@
-
 - name: Deploy APP
   hosts: app
   become: true
@@ -35,3 +34,4 @@
   - name: restart puma
     become: true
     systemd: name=puma state=restarted 
+    
