@@ -1,0 +1,24 @@
+- name: Configure APP # <-- Словесное описание сценария(name)
+  hosts: app # <-- Для каких хостов будут выполняться описанные ниже таски (hosts)
+  become: true
+  vars:
+    db_host: 10.128.0.32
+  tasks:
+    - name: Add init file for puma
+      copy:
+        src: files/puma.service
+        dest: /etc/systemd/system/puma.service
+      notify: reload puma
+    - name: Add config for DB connection
+      template:
+        src: templates/db_cofig.j2
+        dest: /home/ubuntu/db_config
+        owner: ubuntu
+        group: ubuntu
+    - name: enable puma
+      systemd: name=puma enabled=yes
+  
+  
+  handlers:
+    - name: reload puma
+      systemd: name=puma state=restarted 

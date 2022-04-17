@@ -1,4 +1,4 @@
-[app] #название группы
-appserver ansible_host=51.250.14.11 #список хостов в группе
+[app]  
+appserver ansible_host=51.250.8.14
 [db]
-dbserver  ansible_host=51.250.1.249
+dbserver ansible_host=51.250.77.20

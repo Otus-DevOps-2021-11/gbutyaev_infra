@@ -1,0 +1,37 @@
+
+- name: Deploy APP
+  hosts: app
+  become: true
+  tasks:
+    
+    - name: Update apt-get repo and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Install git
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+
+    - name: Install bundler
+      apt:
+        name: bundler
+        state: present
+    
+    - name: Fetch the latest version of application code
+      git:
+       repo : 'https://github.com/express42/reddit.git'
+       dest:  /home/ubuntu/reddit
+       version: monolith # указываем нужную ветку  
+      notify: restart puma
+
+    - name: bundle install
+      bundler:  
+        state: present
+        chdir: /home/ubuntu/reddit # в какой директории выполнять команду bundle
+   
+
+  handlers:
+  - name: restart puma
+    become: true
+    systemd: name=puma state=restarted
